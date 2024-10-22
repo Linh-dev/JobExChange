@@ -5,59 +5,19 @@ using Business.Utilities;
 
 namespace AuthService.Models
 {
-    public class User
+    public class User : BaseModel
     {
-        [BsonId]
-        public ObjectId _id { get; set; }
         public string Username { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
-        public string Provider { get; set; }
+        public string Salt { get; set; }
+        public int ProviderType { get; set; }
+        public string ProviderIdStr { get; set; }
+        public bool IsDeleted { get; set; }
         public Profile Profile { get; set; }
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-        public DateTime? CreatedAt { get; set; }
-        [BsonDateTimeOptions(Kind = DateTimeKind.Local)]
-        public DateTime? UpdatedAt { get; set; }
 
         [BsonIgnore]
-        public string IdStr
-        {
-            get
-            {
-                return _id.ToString();
-            }
-            set
-            {
-                if (!string.IsNullOrEmpty(value))
-                {
-                    _id = new ObjectId(value);
-                }
-            }
-        }
-        [BsonIgnore]
-        public string CreatedAtStr
-        {
-            get
-            {
-                return DateUtil.DateTimeToString(CreatedAt);
-            }
-            set
-            {
-                CreatedAt = DateUtil.StringToDateTime(value);
-            }
-        }
-        [BsonIgnore]
-        public string UpdatedAtStr
-        {
-            get
-            {
-                return DateUtil.DateTimeToString(UpdatedAt);
-            }
-            set
-            {
-                UpdatedAt = DateUtil.StringToDateTime(value);
-            }
-        }
+        public string Token { get; internal set; }
     }
     public class Profile
     {
