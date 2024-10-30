@@ -1,10 +1,10 @@
-﻿using AuthService.Models;
+﻿using Business.Models;
 
 namespace AuthService.Repositories
 {
-    public interface IUserRepository : BaseRepository<User>
+    public interface IUserRepository : BaseRepository<UserInfo>
     {
-        Task<User> GetByUsernameAsync(string username);
-        Task<User> GetByProviderAsync(string providerIdStr, int provider);
+        Task<UserInfo> GetByUsernameAsync(string username);
+        Task<UserInfo> GetByProviderAsync(string providerIdStr, int provider);
     }
 }

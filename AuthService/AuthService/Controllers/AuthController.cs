@@ -1,7 +1,6 @@
 ﻿using AuthService.DTOs;
-using AuthService.Models;
+using Business.Models;
 using AuthService.Services;
-using Business.Utilities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -54,7 +53,7 @@ namespace AuthService.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterModel request)
         {
-            var user = new User();
+            var user = new UserInfo();
             user.Username = request.Username;
             user.Email = request.Email;
             user.PasswordHash = request.PasswordHash;

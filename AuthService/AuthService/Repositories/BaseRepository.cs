@@ -1,5 +1,4 @@
-﻿using AuthService.Models;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 
 namespace AuthService.Repositories
 {

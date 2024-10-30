@@ -1,14 +1,12 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
-using MongoDB.Bson;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using Business.Utilities;
 
-namespace AuthService.Models
+namespace Business.Models
 {
-    public class User : BaseModel
+    public class UserInfo : BaseModel
     {
         public string Username { get; set; }
         public string Email { get; set; }
+        public string Role { get; set; }
         public string PasswordHash { get; set; }
         public string Salt { get; set; }
         public int ProviderType { get; set; }
@@ -17,7 +15,7 @@ namespace AuthService.Models
         public Profile Profile { get; set; }
 
         [BsonIgnore]
-        public string Token { get; internal set; }
+        public string Token { get; set; }
     }
     public class Profile
     {

@@ -1,40 +1,39 @@
-﻿using AuthService.Models;
+﻿using Business.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using System.Security.Cryptography;
 
 namespace AuthService.Repositories
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IMongoCollection<User> _users;
+        private readonly IMongoCollection<UserInfo> _users;
 
         public UserRepository(IMongoDatabase database)
         {
-            _users = database.GetCollection<User>("Users");
+            _users = database.GetCollection<UserInfo>("Users");
         }
 
-        public async Task<IEnumerable<User>> GetAllAsync()
+        public async Task<IEnumerable<UserInfo>> GetAllAsync()
         {
             return await _users.Find(u => !u.IsDeleted).ToListAsync();
         }
 
-        public async Task<User> GetByIdAsync(ObjectId _id)
+        public async Task<UserInfo> GetByIdAsync(ObjectId _id)
         {
             return await _users.Find(u => u._id == _id).FirstOrDefaultAsync();
         }
 
-        public async Task<User> GetByUsernameAsync(string username)
+        public async Task<UserInfo> GetByUsernameAsync(string username)
         {
             return await _users.Find(u => u.Username == username && !u.IsDeleted).FirstOrDefaultAsync();
         }
 
-        public async Task AddAsync(User info)
+        public async Task AddAsync(UserInfo info)
         {
             await _users.InsertOneAsync(info);
         }
 
-        public async Task UpdateAsync(User info)
+        public async Task UpdateAsync(UserInfo info)
         {
             await _users.ReplaceOneAsync(u => u._id == info._id, info);
         }
@@ -44,7 +43,7 @@ namespace AuthService.Repositories
             await _users.DeleteOneAsync(u => u._id == _id);
         }
 
-        public async Task<User> GetByProviderAsync(string providerIdStr, int provider)
+        public async Task<UserInfo> GetByProviderAsync(string providerIdStr, int provider)
         {
             return await _users.Find(u => u.ProviderIdStr == providerIdStr && u.ProviderType == provider && !u.IsDeleted).FirstOrDefaultAsync();
         }

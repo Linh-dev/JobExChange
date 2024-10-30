@@ -1,5 +1,5 @@
 ﻿using AuthService.Configurations;
-using AuthService.Models;
+using Business.Models;
 using AuthService.Repositories;
 using Business.Utilities;
 using Microsoft.Extensions.Options;
@@ -22,7 +22,7 @@ namespace AuthService.Services
             _jwtSettings = jwtSettings.Value;
         }
 
-        public async Task<User> Login(string username, string password)
+        public async Task<UserInfo> Login(string username, string password)
         {
             var user = await _userRepository.GetByUsernameAsync(username);
             password = EncryptUtil.GetSha512(EncryptUtil.Md5(password) + user.Salt);
@@ -34,7 +34,7 @@ namespace AuthService.Services
             return null;
         }
 
-        public async Task<User> LoginWithFacebook(string facebookId)
+        public async Task<UserInfo> LoginWithFacebook(string facebookId)
         {
             var user = await _userRepository.GetByProviderAsync(facebookId, (int)ProviderType.FACEBOOK);
             if (user != null)
@@ -45,7 +45,7 @@ namespace AuthService.Services
             return null;
         }
 
-        public async Task<User> LoginWithGoogle(string googleId)
+        public async Task<UserInfo> LoginWithGoogle(string googleId)
         {
             var user = await _userRepository.GetByProviderAsync(googleId, (int)ProviderType.GOOGLE);
             if (user != null)
@@ -56,14 +56,14 @@ namespace AuthService.Services
             return null;
         }
 
-        public async Task Register(User user)
+        public async Task Register(UserInfo user)
         {
             user.Salt = Guid.NewGuid().ToString().Replace("-", "");
             user.PasswordHash = EncryptUtil.GetSha512(EncryptUtil.Md5(user.PasswordHash) + user.Salt);
             await  _userRepository.AddAsync(user);
         }
 
-        private string GenerateJwtToken(User user)
+        private string GenerateJwtToken(UserInfo user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.UTF8.GetBytes(_jwtSettings.Secret);
@@ -71,9 +71,9 @@ namespace AuthService.Services
             {
                 Subject = new ClaimsIdentity(new[]
                 {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.IdStr),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.Name, user.Username)
+                    new Claim(ClaimTypes.NameIdentifier, user.IdStr),
+                    new Claim(ClaimTypes.Name, user.Username),
+                    new Claim(ClaimTypes.Role, user.Role ?? string.Empty),
                 }),
                 Expires = DateTime.UtcNow.AddMinutes(_jwtSettings.ExpiryMinutes),
                 Issuer = _jwtSettings.Issuer,
