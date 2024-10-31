@@ -25,11 +25,14 @@ namespace AuthService.Services
         public async Task<UserInfo> Login(string username, string password)
         {
             var user = await _userRepository.GetByUsernameAsync(username);
-            password = EncryptUtil.GetSha512(EncryptUtil.Md5(password) + user.Salt);
-            if (user != null && user.PasswordHash == password)
+            if(user != null)
             {
-                user.Token = GenerateJwtToken(user);
-                return user;
+                password = EncryptUtil.GetSha512(EncryptUtil.Md5(password) + user.Salt);
+                if (user.PasswordHash == password)
+                {
+                    user.Token = GenerateJwtToken(user);
+                    return user;
+                }
             }
             return null;
         }

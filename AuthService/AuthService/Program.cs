@@ -1,4 +1,4 @@
-using AuthService.Configurations;
+﻿using AuthService.Configurations;
 using AuthService.Repositories;
 using AuthService.Services;
 using Business.Utilities;
@@ -11,6 +11,15 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// Thêm dịch vụ CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -65,6 +74,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Sử dụng chính sách CORS
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 

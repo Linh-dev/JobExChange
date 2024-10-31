@@ -1,8 +1,18 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Business.Utilities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Thêm dịch vụ CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAllOrigins",
+        builder => builder.AllowAnyOrigin()
+                          .AllowAnyMethod()
+                          .AllowAnyHeader());
+});
 
 // Add services to the container.
 // Cấu hình JWT
@@ -38,12 +48,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
+//Initialize - BusinessSettings
+BusinessSettings.Initialize(builder.Configuration);
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Sử dụng chính sách CORS
+app.UseCors("AllowAllOrigins");
 
 app.UseHttpsRedirection();
 
